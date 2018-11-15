@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         GA Network Steam Button
-// @icon         *://store.giveawaynetwork.xyz/shop/dist/img/favicon.ico
+// @icon         http://store.giveawaynetwork.xyz/shop/dist/img/favicon.ico
 // @namespace    http://giveawaynetwork.xyz/
-// @version      0.2
-// @description  whay
+// @version      0.3
+// @description  what
 // @homepage 	https://github.com/adhiwena/tmprmnky
 // @updateURL 	https://raw.githubusercontent.com/adhiwena/ganetwork/master/GA Network Steam Button.user.js
 // @downloadURL https://raw.githubusercontent.com/adhiwena/ganetwork/master/GA Network Steam Button.user.js
