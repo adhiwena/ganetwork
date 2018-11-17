@@ -2,7 +2,7 @@
 // @name         GA Network Steam Button
 // @icon         http://store.giveawaynetwork.xyz/shop/dist/img/favicon.ico
 // @namespace    http://giveawaynetwork.xyz/
-// @version      0.4
+// @version      0.4.1
 // @description  what
 // @homepage 	https://github.com/adhiwena/ganetwork
 // @updateURL 	https://raw.githubusercontent.com/adhiwena/ganetwork/master/GA Network Steam Button.user.js
@@ -22,6 +22,32 @@
         let str = $(this).attr('href');
         let steamlnk = 'https://store.steampowered.com/app/' + str.substring(6, 12);
         $(this).parent().append('<a class="btn btn-primary steamLink" style="margin:2px;" href="'+steamlnk+'" target="_blank">'+'Steam</a>');
-
     });
+    
+	//masukin ke array
+	var gameList = [];
+	$('table tbody tr').each(function() {
+		var txt = $(this).find("th:first").text();
+		gameList.push(txt);
+	});
+
+	//hitung dupe array
+	var counts = {};
+	gameList.forEach(function(x) { counts[x] = (counts[x] || 0)+1; });
+
+	//hapus dupe di table
+	var seen = {};
+	$('table tr').each(function() {
+		var txt = $(this).find("th").text();
+		if (seen[txt])
+			$(this).remove();
+		else
+			seen[txt] = true;
+	});
+
+	//insert counts
+	$('table tbody tr').each(function() {
+		var txt = $(this).children(":first");
+		$(txt).append(' ('+counts[txt.text()]+' Items)');
+	});
 })();
