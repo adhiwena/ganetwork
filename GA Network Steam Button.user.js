@@ -1,16 +1,14 @@
 // ==UserScript==
 // @name         GA Network Steam Button
 // @icon         http://store.giveawaynetwork.xyz/shop/dist/img/favicon.ico
-// @namespace    http://giveawaynetwork.xyz/
-// @version      0.4.1
+// @namespace    https://giveawaynetwork.xyz/
+// @version      0.4.2
 // @description  what
 // @homepage 	https://github.com/adhiwena/ganetwork
 // @updateURL 	https://raw.githubusercontent.com/adhiwena/ganetwork/master/GA Network Steam Button.user.js
 // @downloadURL https://raw.githubusercontent.com/adhiwena/ganetwork/master/GA Network Steam Button.user.js
 // @author       cyp
-// @match        *://store.giveawaynetwork.xyz/shop/*
-// @exclude		 *://store.giveawaynetwork.xyz/shop/
-// @exclude 	 *://store.giveawaynetwork.xyz/shop/game/*
+// @include      /^http(s)?\:\/\/store.giveawaynetwork.xyz\/shop\/(\d{18})
 // @grant        none
 // ==/UserScript==
 
