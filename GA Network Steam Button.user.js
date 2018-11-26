@@ -2,7 +2,7 @@
 // @name         GA Network Steam Button
 // @icon         http://store.giveawaynetwork.xyz/shop/dist/img/favicon.ico
 // @namespace    https://giveawaynetwork.xyz/
-// @version      0.4.2
+// @version      0.4.3
 // @description  what
 // @homepage 	https://github.com/adhiwena/ganetwork
 // @updateURL 	https://raw.githubusercontent.com/adhiwena/ganetwork/master/GA Network Steam Button.user.js
@@ -14,6 +14,7 @@
 
 (function() {
     $('.buy_button').each(function() {
+	$(this).attr('target','_blank');
         let barterlnk = $(this).parent().parent().find('th:first').text();
         $(this).parent().append('<a class="btn btn-danger barterLink" style="margin:2px;" href="https://barter.vg/search?q='+barterlnk+'" target="_blank">'+'Barter</a>');
         
