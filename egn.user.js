@@ -56,7 +56,7 @@
 	</div>*/}).toString().match(/[^]*\/\*([^]*)\*\/\}$/)[1];
 
 	$('body').append(mdlExport);
-	$('.shop_header').append('<br><input type="button" id="egn-btn-export" class="btn btn-default" value="Export" data-toggle="modal" data-target="#egn-modal-export">');
+	$('.shop_header').append('<br><input type="button" id="egn-btn-export" class="btn btn-info" value="Export" data-toggle="modal" data-target="#egn-modal-export">');
 
 	if (location.pathname.includes('/me/keys/inv')) {
 		var egnUsed = JSON.parse(GM_getValue('egn-used','{}'));
@@ -198,11 +198,12 @@
 
 	function GenRichButton ($this,appID) {
 		var genBtn = (function () {/*
-		<a class="btn btn-danger egn-barter" style="margin: 2px 1px 2px 2px" href="https://barter.vg/steam/app/{appID}" target="_blank">Barter</a>
-		<a class="btn btn-primary egn-steam" style="margin: 2px 2px 2px 1px" href="https://store.steampowered.com/app/{appID}" target="_blank">Steam</a>
-		*/}).toString().match(/[^]*\/\*([^]*)\*\/\}$/)[1];
+			<div class="btn-group" role="group" style="margin: 2px">
+				<a class="btn btn-danger" id="egn-barter" href="https://barter.vg/steam/app/{appID}" target="_blank">Barter</a>
+				<a class="btn btn-primary" id="egn-steam" href="https://store.steampowered.com/app/{appID}" target="_blank">Steam</a>
+			</div>*/}).toString().match(/[^]*\/\*([^]*)\*\/\}$/)[1];
 		$this.after(genBtn.replace(/{appID}/gi, appID));
-		$('td > .btn').addClass('btn-xs');
+		$('td .btn').addClass('btn-xs');
 	}
 
 	function sortTable(n,isNumber) {
