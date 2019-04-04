@@ -14,7 +14,7 @@
 // ==/UserScript==
 
 (function() {
-	if (location.pathname == '/shop/me/show') return;
+	if (location.pathname.includes('/shop/me/show')) return;
 
 	$('tbody th').wrapInner('<td/>').find('td').unwrap();
 	$('table').attr({id:'game-list',class:'table table-hover table-condensed'});
@@ -22,7 +22,8 @@
 	$('.key_list thead tr').attr('style', 'cursor:pointer');
 
 
-	$('body > .container a:not(:contains("View")) :not(:has[key])').each(function() {
+	$('body > .container a:not(:contains("View"))').each(function() {
+		if (location.pathname.includes('/shop/me/keys/inv')) return;
 		var pathname = $(this).attr('href').split('/');
 		var appID = location.pathname == '/shop/' ? pathname[3] : pathname[2];
 		GenRichButton($(this),appID);
