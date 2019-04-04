@@ -16,4 +16,5 @@ https://github.com/adhiwena/ganetwork/raw/master/egn.user.js
 4. Hit install when asked
 5. Enjoy!
 
+## Screenshots
 ![EGN](https://github.com/adhiwena/ganetwork/blob/master/egn.jpg)
