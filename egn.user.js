@@ -114,10 +114,15 @@
 	    });
 
 		$('#egn-btn-export').click(function() {
-			$("#egn-output-area").val("");
-			var output = "";
+			$("#egn-output-area").val('');
+			var output = '';
 			$('.key_list tbody tr').each(function() {
-				 output += $(this).find('td:contains(credits)').prev().text()+'\n';
+				var gameName = $(this).find('td:contains(credits)').prev().text();
+				if (location.pathname.includes('/shop/me/keys/inv')) {
+					if ($(this).hasClass('danger')) return;
+					var key = $(this).find('a[key]').attr('key');
+				}
+				output += gameName+' - '+key+'\n';
 			});
 			$("#egn-output-area").val(output);
 		});
@@ -125,7 +130,7 @@
 	    $('#egn-show').click(function () {
 	    	if ($('.egn-cb:checked').length == 0) return;
 	    	var isChanged = false;
-	    	$('.egn-cb:checked').each(function(i,e) {
+	    	$('.egn-cb:checked').each(function() {
 	        	var rowid = $(this).closest('tr').attr('data-row-id').toUpperCase();
 	        	if (used) {
 					var index = used.indexOf(rowid);
