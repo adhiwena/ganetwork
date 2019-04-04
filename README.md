@@ -4,7 +4,7 @@
 * Compact Table
 * Table Sort on Store and Inventory Page
 * Remove Duplicate Games (Store Page)
-* Mark keys as used (Invetory Page) 
+* Mark/unmark keys as used (Invetory Page) 
 * Export Game List (Store Page)
 * Export Unused Key List (Invetory Page)
 ## Download
