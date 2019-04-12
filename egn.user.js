@@ -1,63 +1,65 @@
 // ==UserScript==
 // @name         Enhanced Giveaway Network
-// @icon         http://store.giveawaynetwork.xyz/shop/dist/img/favicon.ico
-// @namespace    https://giveawaynetwork.xyz/
-// @version      0.0.2
-// @description  what
-// @author       cyp
-// @include      /^http(s)?\:\/\/store.giveawaynetwork.xyz\/shop\/*
+// @namespace    https://github.com/adhiwena
+// @version      0.0.3
+// @author       Cypherpunks
+// @description  What
 // @homepage     https://github.com/adhiwena/ganetwork
-// @updateURL    https://raw.githubusercontent.com/adhiwena/ganetwork/master/egn.user.js
-// @downloadURL  https://raw.githubusercontent.com/adhiwena/ganetwork/master/egn.user.js
+// @icon         https://www.google.com/s2/favicons?domain=store.giveawaynetwork.xyz
+// @updateURL    https://github.com/adhiwena/ganetwork/raw/master/egn.user.js
+// @downloadURL  https://github.com/adhiwena/ganetwork/raw/master/egn.user.js
+// @supportURL   https://github.com/adhiwena/ganetwork/issues
+// @include      /^http(s)?\:\/\/store.giveawaynetwork.xyz\/shop\/*
 // @run-at       document-idle
 // @grant        GM_getValue
 // @grant        GM_setValue
+// @grant        GM_info
+// @grant        GM_unsafeWindow
 // ==/UserScript==
 
 (function() {
     var pn = location.pathname;
     if (pn.includes('/shop/me/show')) return;
+    console.log('[Enhanced Giveaway Network] Script Version: '+GM_info.script.version);
 
     $('tbody th').wrapInner('<td/>').find('td').unwrap();
     $('table').attr({id:'game-list',class:'table table-hover table-condensed',style:'text-align: left'});
     $('table thead tr').attr('style', 'cursor:pointer');
-    $('.btn').addClass('btn-xs');
 
     if (pn !== '/shop/me/keys/inv') {
-        $('body > .container a:not(:contains(View))').each(function() {
-            var hrf = $(this).attr('href').split('/');
-            var appID = pn == '/shop/' ? hrf[3] : hrf[2];
+        $('body > .container a[class*=btn]:not(:contains(View))').each(function() {
+            var appID = $(this).attr('href').match(/\/[0-9]{1,6}\b/g);
             $(this).after(`
             <div class="btn-group" role="group" style="margin: 2px">
-            <a class="btn btn-danger btn-xs" id="egn-barter" href="https://barter.vg/steam/app/`+appID+`" target="_blank">Barter</a>
-            <a class="btn btn-primary btn-xs" id="egn-steam" href="https://store.steampowered.com/app/`+appID+`" target="_blank">Steam</a>
+            <a class="btn btn-danger" id="egn-barter" href="https://barter.vg/steam/app${appID}" target="_blank">Barter</a>
+            <a class="btn btn-primary" id="egn-steam" href="https://store.steampowered.com/app${appID}" target="_blank">Steam</a>
             </div>`);
         });
     }
+
+    $('table .btn').addClass('btn-xs');
 
     if (pn.match(/[0-9]{18}/gi)) {
         generateCopies();
         generateExport();
         makeAllSortable();
-        $('table th:not(:last)').prepend('↑↓ ');
     } else if (pn === '/shop/me/keys/inv') {
         generateMarker();
         generateExport();
         makeAllSortable();
-        $('table th:not(:last):not(:first)').prepend('↑↓ ');
     }
 
     function generateMarker () {
-        var egnUsed = JSON.parse(GM_getValue('egn-used','{}'));
-        var used = egnUsed['used'];
+        var used;
 
-        $('table th:contains(Infos)').text('Price').after('<th>Seller</th>');
+        $('table th:contains(Infos)').text('↑↓ Price').after('<th>↑↓ Seller</th>');
+        $('table th:first').prepend('↑↓ ');
         $('table thead tr').prepend('<th><input type="checkbox" id="egn-cb-all" vallue="cbAll"></th>');
 
         $('.shop_header').append(`<br>
             <div class="btn-group" role="group" style="margin: 5px">
-                <button type="button" class="btn btn-primary btn-xs" id="egn-show"><span class="glyphicon glyphicon-eye-open"></span></button>
-                <button type="button" class="btn btn-danger btn-xs" id="egn-hide"><span class="glyphicon glyphicon-eye-close"></span></button>
+                <button type="button" class="btn btn-primary" id="egn-show"><span class="glyphicon glyphicon-eye-open"></span></button>
+                <button type="button" class="btn btn-danger" id="egn-hide"><span class="glyphicon glyphicon-eye-close"></span></button>
             </div>`);
 
         $('table tbody tr').each(function() {
@@ -73,58 +75,71 @@
             infos.text(price+' credits');
         });
 
+        showMarker();
+
         $('#egn-cb-all').click(function() {
-            $('.egn-cb').not(this).prop('checked', this.checked);
+            $('.egn-cb').prop('checked', this.checked);
         });
 
         $('#egn-hide').click(function () {
-            if ($('.egn-cb:checked').length == 0) return;
-            var isChanged = false;
-            $('.egn-cb:checked').each(function(i,e) {
-                var rowid = $(this).closest('tr').attr('data-row-id').toUpperCase();
-                if (used) {
+            if ($('.egn-cb:checked').length === 0) return;
+            var isChecked = false;
+            if (used) {
+                $('.egn-cb:checked').each(function(i,e) {
+                    var rowid = $(e).closest('tr').attr('data-row-id').toUpperCase();
                     if (used.includes(rowid)) return;
                     used.push(rowid);
-                    isChanged = true;
-                } else {
+                    isChecked = true;
+                });
+            } else {
+                $('.egn-cb:checked').each(function(i,e) {
+                    var rowid = $(e).closest('tr').attr('data-row-id').toUpperCase();
                     used = [rowid];
-                    isChanged = true;
-                }
-            });
-            if (isChanged) {
+                });
+                isChecked = true;
+            }
+            if (isChecked) {
                 GM_setValue("egn-used",JSON.stringify({used}));
-                location.reload();
+                showMarker();
+                $('#egn-cb-all,.egn-cb').prop('checked', false );
             }
         });
 
         $('#egn-show').click(function () {
-            if ($('.egn-cb:checked').length == 0) return;
-            var isChanged = false;
-            $('.egn-cb:checked').each(function() {
-                var rowid = $(this).closest('tr').attr('data-row-id').toUpperCase();
-                if (used) {
+            if ($('.egn-cb:checked').length === 0) return;
+            if (used) {
+                var isChecked = false;
+                $('.egn-cb:checked').each(function(i,e) {
+                    var rowid = $(e).closest('tr').attr('data-row-id').toUpperCase();
                     var index = used.indexOf(rowid);
                     if (index > -1) {
                         used.splice(index, 1);
-                        isChanged = true;
+                        isChecked = true;
                     }
+                });
+
+                if (isChecked) {
+                    GM_setValue("egn-used",JSON.stringify({used}));
+                    showMarker();
+                    $('#egn-cb-all,.egn-cb').prop('checked', false );
                 }
-            });
-            if (isChanged) {
-                GM_setValue("egn-used",JSON.stringify({used}));
-                location.reload();
             }
         });
 
-        if (used) {
-            used.forEach( function(element, index) {
-                $('tr[data-row-id='+element+']').attr('class','danger');
-            });
+        function showMarker () {
+            var egnUsed = JSON.parse(GM_getValue('egn-used','{}'));
+            used = egnUsed['used'];
+            if (used) {
+                $('table tbody tr').removeClass('danger');
+                used.forEach( function(element, index) {
+                    $('tr[data-row-id='+element+']').attr('class','danger');
+                });
+            }
         }
     }
 
     function generateExport () {
-        $('.shop_header').append('<br><input type="button" id="egn-btn-export" class="btn btn-info btn-xs" value="Export" data-toggle="modal" data-target="#egn-modal-export">');
+        $('.shop_header').append('<br><input type="button" id="egn-btn-export" class="btn btn-info" value="Export" data-toggle="modal" data-target="#egn-modal-export">');
         $('body').append(`
         <div class="modal fade" id="egn-modal-export" role="dialog">
         <div class="modal-dialog">
@@ -144,22 +159,23 @@
         </div>`);
 
         $('#egn-btn-export').click(function() {
-            $("#egn-output-area").val('');
             var output = '';
-            $('table tbody tr:not([class*=danger])').each(function() {
-                var name = $(this).find('td:first').text();
+            $('table tbody tr').each(function() {
                 if (pn === '/shop/me/keys/inv') {
-                    name = $(this).find('a[key]').attr('key');
-                    name += '   '+$(this).find('td:nth-child(2)').text();
+                    output += $(this).find('.egn-cb:checked').length !== 0 ?
+                     `${$(this).find('a[key]').attr('key')}   ${$(this).find('td:eq(1)').text()}\n` : '' ;
+                } else {
+                    output += $(this).find('td:first').text()+'\n';
                 }
-                output += name+'\n';
             });
             $("#egn-output-area").val(output);
+            $('#egn-cb-all,.egn-cb').prop('checked', false );
         });
     }
 
     function generateCopies(){
-        $('table th:first').after('<th id="egn-copies" style="cursor:pointer">Copies</th>');
+        $('table th:first').after('<th id="egn-copies" style="cursor:pointer">↑↓ Copies</th>');
+        $('table th:first, table th:eq(2)').prepend('↑↓ ');
 
         //compre
         var seen = {};
